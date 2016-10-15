@@ -1,5 +1,6 @@
 #include <math.h>
 #include <iostream>
+#include <memory>
 
 const unsigned END_VAL = 10;
 
@@ -17,9 +18,9 @@ class Bspline : public BsplineInterface  {
     public:
     static void evaluate(const double x, const unsigned num_knots, const double* knot_vector, double* N) {
 
-        double Npm1[num_knots - p + 1];
+        auto Npm1 = std::make_unique<double[]>(num_knots - p + 1);
 
-        Bspline<p - 1, k - 1>::evaluate(x, num_knots, knot_vector, Npm1);
+        Bspline<p - 1, k - 1>::evaluate(x, num_knots, knot_vector, Npm1.get());
 
         for (int i = 0; i < num_knots - p - 1; ++i) {
 
@@ -41,9 +42,9 @@ class Bspline<p, 0> : public BsplineInterface {
     public:
     static void evaluate(const double x, const unsigned int num_knots, const double* knot_vector, double* N) {
 
-        double Npm1[num_knots - p + 1];
+        auto Npm1 = std::make_unique<double[]>(num_knots - p + 1);
 
-        Bspline<p - 1, 0>::evaluate(x, num_knots, knot_vector, Npm1);
+        Bspline<p - 1, 0>::evaluate(x, num_knots, knot_vector, Npm1.get());
 
         for (int i = 0; i < num_knots - p - 1; ++i) {
 
