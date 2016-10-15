@@ -103,7 +103,7 @@ template<int N2>
 struct Factory<0, END_VAL, N2> : ThrowError {};
 
 template<int N1>
-struct Factory<1, N1, END_VAL> : ThrowError {};
+struct Factory<1, N1, N1> : ThrowError {};
 
 template<int N1, int N2>
 struct Factory<0, N1, N2>
