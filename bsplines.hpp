@@ -8,7 +8,7 @@ namespace BSPLINES {
 
 class BsplineInterface {
     public:
-    virtual void evaluate(const double, const unsigned, const double*, double*);
+    virtual void evaluate(const double, const unsigned, const double*, double*) = 0;
 };
 
 template<unsigned p, unsigned k> 
@@ -16,11 +16,15 @@ template<unsigned p, unsigned k>
 //function itself
 class Bspline : public BsplineInterface  {
     public:
-    static void evaluate(const double x, const unsigned num_knots, const double* knot_vector, double* N) {
+    virtual void evaluate(const double x, const unsigned num_knots, const double* knot_vector, double* N) override {
+        evaluate_impl(x, num_knots, knot_vector, N);
+    }
+
+    static void evaluate_impl(const double x, const unsigned num_knots, const double* knot_vector, double* N) {
 
         auto Npm1 = std::make_unique<double[]>(num_knots - p + 1);
 
-        Bspline<p - 1, k - 1>::evaluate(x, num_knots, knot_vector, Npm1.get());
+        Bspline<p - 1, k - 1>::evaluate_impl(x, num_knots, knot_vector, Npm1.get());
 
         for (int i = 0; i < num_knots - p - 1; ++i) {
 
@@ -40,11 +44,15 @@ class Bspline : public BsplineInterface  {
 template<unsigned p> 
 class Bspline<p, 0> : public BsplineInterface {
     public:
-    static void evaluate(const double x, const unsigned int num_knots, const double* knot_vector, double* N) {
+    virtual void evaluate(const double x, const unsigned num_knots, const double* knot_vector, double* N) override {
+        evaluate_impl(x, num_knots, knot_vector, N);
+    }
+
+    static void evaluate_impl(const double x, const unsigned int num_knots, const double* knot_vector, double* N) {
 
         auto Npm1 = std::make_unique<double[]>(num_knots - p + 1);
 
-        Bspline<p - 1, 0>::evaluate(x, num_knots, knot_vector, Npm1.get());
+        Bspline<p - 1, 0>::evaluate_impl(x, num_knots, knot_vector, Npm1.get());
 
         for (int i = 0; i < num_knots - p - 1; ++i) {
 
@@ -64,7 +72,11 @@ class Bspline<p, 0> : public BsplineInterface {
 template<> 
 class Bspline<0, 0> : public BsplineInterface {
     public:
-    static void evaluate(const double x, const int num_knots, const double* knot_vector, double* N) {
+    virtual void evaluate(const double x, const unsigned num_knots, const double* knot_vector, double* N) override {
+        evaluate_impl(x, num_knots, knot_vector, N);
+    }
+
+    static void evaluate_impl(const double x, const int num_knots, const double* knot_vector, double* N) {
 
         for (int i = 0; i < num_knots; ++i) {
 
